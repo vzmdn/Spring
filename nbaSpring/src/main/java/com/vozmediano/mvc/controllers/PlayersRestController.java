@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -72,8 +73,14 @@ public class PlayersRestController {
 
 	// Get all players
 	@GetMapping("")
-	public ResponseEntity<?> getAllPlayers() {
-		List<Players> players = playersService.findAll();
+	public ResponseEntity<?> getAllPlayers(@RequestParam(required = false) String position) {
+		List<Players> players = null;
+		if (position != null) {
+			players = playersService.findByPosition(position);
+		} else {
+			players = playersService.findAll();
+		}
+
 		if (players.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		} else {
@@ -159,7 +166,7 @@ public class PlayersRestController {
 	public Stats findSeasonStats(@PathVariable int id_p, @PathVariable String id_s) {
 		@SuppressWarnings("unused")
 		Players p = playersService.findById(id_p); // solo se inicializa p para que salte la excepción not found
-		StatsId statsId = new StatsId(id_s, id_p);
+		StatsId statsId = new StatsId(id_s.replace('-', '/'), id_p);
 		Stats stats = statsService.findStatsFromSeason(statsId);
 		return stats;
 	}
@@ -207,7 +214,7 @@ public class PlayersRestController {
 				break;
 			}
 		}
-		if(updatedStat == null) {
+		if (updatedStat == null) {
 			return ResponseEntity.noContent().build();
 		} else {
 			return new ResponseEntity<Stats>(updatedStat, HttpStatus.OK);
