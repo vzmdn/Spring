@@ -9,4 +9,6 @@ public interface IPlayersService {
 	public void save(Players p);
 	public Players findById(int id);
 	public void delete(Players p);
+	public List<Players> findByPosition(String pos);
+
 }

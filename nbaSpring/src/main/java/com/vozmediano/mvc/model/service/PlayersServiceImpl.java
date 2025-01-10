@@ -34,7 +34,11 @@ public class PlayersServiceImpl implements IPlayersService {
 	public void delete(Players p) {
 		playersDAO.delete(p);
 	}
-
+	
+	@Override
+	public List<Players> findByPosition(String pos) {
+		return (List<Players>)playersDAO.findByPosition(pos);
+	}
 	
 
 }
